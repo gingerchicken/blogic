@@ -1,6 +1,6 @@
 import unittest
 
-from ..tokeniser import capture_strings, tokenise, shunt
+from ..tokeniser import capture_strings, tokenise, shunt, And, Or, Xor
 
 class TestCaptureStrings(unittest.TestCase):
     def test_extracts_strings(self):
@@ -156,3 +156,34 @@ class TestShunt(unittest.TestCase):
         output = shunt(tokens)
 
         self.assertEqual([str(i) for i in output], ['A', 'B', 'C', 'OR', 'AND'])
+
+class Operators(unittest.TestCase):
+    def test_and(self):
+        """AND works"""
+    
+        a = And()
+
+        self.assertTrue(a.perform(True, True))
+        self.assertFalse(a.perform(True, False))
+        self.assertFalse(a.perform(False, True))
+        self.assertFalse(a.perform(False, False))
+
+    def test_or(self):
+        """OR works"""
+    
+        o = Or()
+
+        self.assertTrue(o.perform(True, True))
+        self.assertTrue(o.perform(True, False))
+        self.assertTrue(o.perform(False, True))
+        self.assertFalse(o.perform(False, False))
+
+    def test_xor(self):
+        """XOR works"""
+    
+        x = Xor()
+
+        self.assertFalse(x.perform(True, True))
+        self.assertTrue(x.perform(True, False))
+        self.assertTrue(x.perform(False, True))
+        self.assertFalse(x.perform(False, False))
