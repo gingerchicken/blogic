@@ -261,3 +261,28 @@ class TestEvaluateAll(unittest.TestCase):
             [{'A': True,   'B': False}, True],
             [{'A': True,   'B': True},  False]
         ])
+    
+    def test_all(self):
+        expression = """'A' AND "B" OR - ("C" XOR "D")"""
+
+        # get the result
+        rows = evaluate_all(expression, sort_vars=True)
+
+        self.assertEqual(rows, [
+            [{'A': False, 'B': False, 'C': False, 'D': False}, True],
+            [{'A': False, 'B': False, 'C': False, 'D': True},  False],
+            [{'A': False, 'B': False, 'C': True,  'D': False}, False],
+            [{'A': False, 'B': False, 'C': True,  'D': True},  True],
+            [{'A': False, 'B': True,  'C': False, 'D': False}, True],
+            [{'A': False, 'B': True,  'C': False, 'D': True},  False],
+            [{'A': False, 'B': True,  'C': True,  'D': False}, False],
+            [{'A': False, 'B': True,  'C': True,  'D': True},  True],
+            [{'A': True,  'B': False, 'C': False, 'D': False}, True],
+            [{'A': True,  'B': False, 'C': False, 'D': True},  False],
+            [{'A': True,  'B': False, 'C': True,  'D': False}, False],
+            [{'A': True,  'B': False, 'C': True,  'D': True},  True],
+            [{'A': True,  'B': True,  'C': False, 'D': False}, True],
+            [{'A': True,  'B': True,  'C': False, 'D': True},  True],
+            [{'A': True,  'B': True,  'C': True,  'D': False}, True],
+            [{'A': True,  'B': True,  'C': True,  'D': True},  True]
+        ])
