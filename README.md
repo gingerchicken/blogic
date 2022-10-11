@@ -22,7 +22,7 @@ The following expression:
 import blogic.evaluator.evaluate_all
 
 # Evaluate the expression
-blogic.evaluator.evaluate_all("""'A' AND "B" OR - ("C" XOR "D")""" True)
+blogic.evaluator.evaluate_all("""'A' AND "B" OR - ("C" XOR "D")""", True)
 
 """
 (Such that the inputs are on the left and the output is on the right)
