@@ -13,7 +13,7 @@ The following operators are supported:
 | `)`      | Ends a group |
 | `'`      | Marks start of variable name |
 | `"`      | Marks start of variable name |
-| `\\`     | Escapes the next character |
+| `\`     | Escapes the next character |
 
 ### Example
 The following expression:
