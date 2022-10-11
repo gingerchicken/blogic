@@ -236,9 +236,6 @@ class TestEvaluateAll(unittest.TestCase):
         # get the result
         rows = evaluate_all(expression, sort_vars=True)
 
-        for row in rows:
-            print(row)
-
         self.assertEqual(rows, [
             [{'A': False,  'B': False,  'C': False}, True],
             [{'A': False,  'B': False,  'C': True},  True],

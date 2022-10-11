@@ -21,8 +21,6 @@ def evaluate_postfix(postfix_tokens : list, variables : dict) -> bool:
             # Get the argument
             arg = stack.pop()
 
-            print([str(i) for i in postfix_tokens])
-
             # Evaluate
             stack.append(not arg)
 
