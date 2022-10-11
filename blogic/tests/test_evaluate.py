@@ -249,3 +249,18 @@ class TestEvaluateAll(unittest.TestCase):
             [{'A': True,   'B': True,   'C': False}, True],
             [{'A': True,   'B': True,   'C': True},  True]
         ])
+    
+    def test_xor(self):
+        """A XOR B"""
+
+        expression = "'A' XOR 'B'"
+
+        # get the result
+        rows = evaluate_all(expression, sort_vars=True)
+
+        self.assertEqual(rows, [
+            [{'A': False,  'B': False}, False],
+            [{'A': False,  'B': True},  True],
+            [{'A': True,   'B': False}, True],
+            [{'A': True,   'B': True},  False]
+        ])
