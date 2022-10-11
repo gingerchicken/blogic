@@ -15,6 +15,18 @@ def evaluate_postfix(postfix_tokens : list, variables : dict) -> bool:
             stack.append(val)
 
             continue
+        
+        # Handle not
+        if isinstance(token, Not):
+            # Get the argument
+            arg = stack.pop()
+
+            print([str(i) for i in postfix_tokens])
+
+            # Evaluate
+            stack.append(not arg)
+
+            continue
 
         # Handle operators
         if isinstance(token, Operator):
@@ -24,16 +36,6 @@ def evaluate_postfix(postfix_tokens : list, variables : dict) -> bool:
 
             # Evaluate
             stack.append(token.perform(arg1, arg2))
-
-            continue
-
-        # Handle not
-        if isinstance(token, Not):
-            # Get the argument
-            arg = stack.pop()
-
-            # Evaluate
-            stack.append(not arg)
 
             continue
         

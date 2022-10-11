@@ -25,14 +25,10 @@ class Bracket(Token):
 class Operator(Token):
     pass
 
+    precedence = 1
+
     def perform(self, a : bool, b : bool) -> bool:
         raise NotImplementedError()
-
-class Not(Token):
-    symbol = "-"
-
-    def __init__(self):
-        super().__init__(self.symbol)
 
 class And(Operator):
     symbol = "AND"
@@ -60,6 +56,17 @@ class Xor(Operator):
 
     def perform(self, a: bool, b: bool) -> bool:
         return a ^ b
+
+class Not(Operator):
+    symbol = "-"
+
+    # Please note that this is not a real operator, it just needs
+    # to be sorted with higher precedence than the other operators
+
+    precedence = 2
+
+    def __init__(self):
+        super().__init__(self.symbol)
 
 class Variable(Token):
     @property
@@ -202,11 +209,6 @@ def shunt(tokens : list) -> list:
             output.append(token)
             continue
 
-        # Handle not
-        if isinstance(token, Not):
-            stack.append(token)
-            continue
-
         # Handle brackets
         if isinstance(token, Bracket):
             if token.is_left():
@@ -227,7 +229,7 @@ def shunt(tokens : list) -> list:
             # Peek
             peek = stack[-1] if stack else None
 
-            while peek and isinstance(peek, Operator):
+            while peek and isinstance(peek, Operator) and peek.precedence >= token.precedence:
                 output.append(stack.pop())
 
                 # Get the next peek
