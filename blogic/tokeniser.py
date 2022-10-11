@@ -23,8 +23,6 @@ class Bracket(Token):
         return self.value == ")"
 
 class Operator(Token):
-    pass
-
     precedence = 1
 
     def perform(self, a : bool, b : bool) -> bool:
