@@ -147,14 +147,16 @@ def tokenise(expression : str, str_holder : str = '%s') -> list:
     # Remove all whitespace
     anond = anond.replace(" ", "")
 
-    # Generate some regexes
-    bracket_regex = re.compile(r"[\(\)]")
-    operator_regex = re.compile(r"(" + "|".join(OPERATORS) + ")")
-    variable_regex = re.compile(r"[a-zA-Z0-9_]+")
-    str_regex = re.compile(str_holder)
+    # Generate some regexes for the different tokens
+    res = [
+        re.compile(r"[\(\)]"),                        # Brackets
+        re.compile(r"(" + "|".join(OPERATORS) + ")"), # Operators
+        re.compile(r"(" + str_holder + ")"),          # Strings
+        re.compile(r"[a-zA-Z0-9_]+")                  # Other
+    ]
 
-    # Or them together
-    regex = re.compile("|".join([bracket_regex.pattern, operator_regex.pattern, variable_regex.pattern, str_regex.pattern]))
+    # Add them all together into one regex
+    regex = re.compile("|".join([i.pattern for i in res]))
 
     # Tokenise
     tokens = []
