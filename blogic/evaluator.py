@@ -6,21 +6,39 @@ def evaluate_postfix(postfix_tokens : list, variables : dict) -> bool:
     stack = []
     
     for token in postfix_tokens:
+        # Handle variables
         if isinstance(token, Variable):
             # Get the variable's value
             val = variables[token.name]
 
             # Push the value
             stack.append(val)
-        elif isinstance(token, Operator):
+
+            continue
+
+        # Handle operators
+        if isinstance(token, Operator):
             # Get the arguments
             arg2 = stack.pop()
             arg1 = stack.pop()
 
             # Evaluate
             stack.append(token.perform(arg1, arg2))
-        else:
-            raise ValueError("Invalid token")
+
+            continue
+
+        # Handle not
+        if isinstance(token, Not):
+            # Get the argument
+            arg = stack.pop()
+
+            # Evaluate
+            stack.append(not arg)
+
+            continue
+        
+        # Failure
+        raise ValueError("Invalid token")
 
     return stack.pop()
 

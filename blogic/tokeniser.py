@@ -28,6 +28,12 @@ class Operator(Token):
     def perform(self, a : bool, b : bool) -> bool:
         raise NotImplementedError()
 
+class Not(Token):
+    symbol = "-"
+
+    def __init__(self):
+        super().__init__(self.symbol)
+
 class And(Operator):
     symbol = "AND"
 
@@ -59,6 +65,9 @@ class Variable(Token):
     @property
     def name(self):
         return self.value
+    
+    def __init__(self, name):
+        super().__init__(name)
 
 OPERATORS = {
     And.symbol: And,
@@ -152,6 +161,7 @@ def tokenise(expression : str, str_holder : str = '%s') -> list:
         re.compile(r"[\(\)]"),                        # Brackets
         re.compile(r"(" + "|".join(OPERATORS) + ")"), # Operators
         re.compile(r"(" + str_holder + ")"),          # Strings
+        re.compile(r"(" + Not.symbol + ")"),          # Not
         re.compile(r"[a-zA-Z0-9_]+")                  # Other
     ]
 
@@ -170,12 +180,14 @@ def tokenise(expression : str, str_holder : str = '%s') -> list:
             
             # Create an instance of the operator and add it to the tokens
             tokens.append(op())
+        elif val == Not.symbol:
+            tokens.append(Not())
         elif val == str_holder:
             tokens.append(Variable(strings.pop()))
         else:
             # TODO maybe put it in a variable class
             raise ValueError("Invalid token: " + val)
-    
+
     return tokens
 
 def shunt(tokens : list) -> list:
@@ -188,6 +200,11 @@ def shunt(tokens : list) -> list:
         # Handle variables
         if isinstance(token, Variable):
             output.append(token)
+            continue
+
+        # Handle not
+        if isinstance(token, Not):
+            stack.append(token)
             continue
 
         # Handle brackets

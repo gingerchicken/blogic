@@ -63,6 +63,46 @@ class TestEvaluate(unittest.TestCase):
             'B': True,
             'C': False
         }), False)
+    
+    def test_negated(self):
+        """Works with negated variables"""
+        
+        expression = "-'A'"
+
+        # get the result
+        result = evaluate(expression, {
+            'A': True
+        })
+        
+        self.assertEqual(result, False)
+
+        # get the result
+        result = evaluate(expression, {
+            'A': False
+        })
+
+        self.assertEqual(result, True)
+    
+    def test_negated_brackets(self):
+        """Works with negated variables"""
+        
+        expression = "-('A' AND 'B')"
+
+        # get the result
+        result = evaluate(expression, {
+            'A': True,
+            'B': True
+        })
+        
+        self.assertEqual(result, False)
+
+        # get the result
+        result = evaluate(expression, {
+            'A': True,
+            'B': False
+        })
+
+        self.assertEqual(result, True)
 
 class TestEvaluateAll(unittest.TestCase):
     def setUp(self) -> None:
