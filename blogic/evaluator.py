@@ -3,10 +3,11 @@ from .tokeniser import *
 def evaluate_postfix(postfix_tokens : list, variables : dict) -> bool:
     """Evaluate the postfix tokens"""
     
-    stack = []
+    stack = [] # The stack
     
+    # Iterate over the tokens
     for token in postfix_tokens:
-        # Handle variables
+        # Handle variable tokens
         if isinstance(token, Variable):
             # Get the variable's value
             val = variables[token.name]
@@ -68,9 +69,11 @@ def evaluate_all(expressions : str, sort_vars : bool = False) -> list:
 
     # Get the variables
     for token in tokens:
+        # Ignore non-variables
         if not isinstance(token, Variable):
             continue
 
+        # Add the variable to the set (to remove duplicates)
         variables.add(token.name)
     
     # Get the number of variables
@@ -82,7 +85,7 @@ def evaluate_all(expressions : str, sort_vars : bool = False) -> list:
     # Get the variable names
     variables = list(variables)
 
-    # Sort the variables
+    # Sort the variables, by name, this way the truth table is always in the same order
     if sort_vars:
         variables.sort()
 
@@ -91,7 +94,7 @@ def evaluate_all(expressions : str, sort_vars : bool = False) -> list:
 
     # Iterate over the rows
     for row in range(num_rows):
-        # Convert the row to a binary string
+        # Convert the row to a binary string (used for the binary representation of the row's boolean inputs)
         binary = bin(row)[2:].zfill(num_variables)
 
         # Create the variables with their values

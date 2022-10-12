@@ -233,6 +233,10 @@ def tokenise(expression : str, str_holder : str = '%s') -> list:
 def shunt(tokens : list) -> list:
     """Shunt the tokens into reverse polish notation"""
 
+    # For more information on this algorithm, see https://en.wikipedia.org/wiki/Shunting_yard_algorithm
+    # This makes it a lot easier to enumerate the tokens and determine the precedence of the operators
+    # Typically, this is used for enumerating mathematical expressions, but I think it works well here too.
+    
     output = [] # The output queue
     stack  = [] # The operator stack
 
@@ -289,9 +293,11 @@ def shunt(tokens : list) -> list:
 
     # Pop the rest of the stack
     while stack:
+        # Handle invalid brackets
         if isinstance(stack[-1], Bracket):
             raise ValueError("Mismatched brackets")
         
+        # Add the operator to the output
         output.append(stack.pop())
     
     # Return the output
