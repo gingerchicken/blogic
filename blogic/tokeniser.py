@@ -148,13 +148,15 @@ def capture_strings(expression : str, place_holder_prefix = '%s', escape_chars =
         raise ValueError("Unclosed string")   
     
     # Replace the strings with placeholders
-    anond = expression
     offset = 0
     for start, end in replace_poses:
-        anond = anond[:start + offset] + place_holder_prefix + anond[end + offset:]
+        # Anonymise the string
+        expression = expression[:start + offset] + place_holder_prefix + expression[end + offset:]
+
+        # Increment the offset
         offset += len(place_holder_prefix) - (end - start)
     
-    return strings, anond
+    return strings, expression
     
 def tokenise(expression : str, str_holder : str = '%s') -> list:
     """Tokenize a given expression"""
