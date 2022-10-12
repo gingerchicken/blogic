@@ -89,16 +89,15 @@ STRING_OPENERS = ['"', "'"]
 def capture_strings(expression : str, place_holder_prefix = '%s', escape_chars = ['\\']) -> tuple:
     """Gets all strings in a given expression, and replaces them with a placeholder"""
 
-    strings = []
-    string = ""
-    in_string = False
-    escape = False
-    start_pos = 0
-    open_char = None
-
-    replace_poses = []
-
-    pos = 0
+    strings = []        # List of extracted strings
+    string = ""         # Current string being built
+    in_string = False   # Whether we are currently extracting a string
+    escape = False      # Whether the next character should be escaped
+    start_pos = 0       # The position of the start of the current string (so we can remove it later)
+    open_char = None    # The character that opened the string (so either ' or ")
+    replace_poses = []  # The start and end positions of the strings in the expression (for extraction)
+    pos = 0             # The current character index in the expression (used for extraction)
+    
     for char in expression:
         # Increment position
         pos += 1
@@ -109,25 +108,24 @@ def capture_strings(expression : str, place_holder_prefix = '%s', escape_chars =
             escape = False
             continue
         
+        # Handle escape chars
         if char in escape_chars:
             escape = True
             continue
         
         # Handle strings (i.e. remove them)
-        
-        opener = char in STRING_OPENERS # Is it an opener?
-        rel_opener = not (in_string and char != open_char) # Is it a relevant opener?
 
-        if opener and rel_opener:
+        # (Is it an opening character?) and (is it relevant?)
+        if (char in STRING_OPENERS) and not (in_string and char != open_char):
             # Open the string
             if not in_string:
                 # Start capturing the string, ignore the first character
                 in_string = True
                 open_char = char
                 start_pos = pos - 1 # -1 to ignore the first character
-                continue # Done
+                continue # Next character
             
-            # Otherwise close it ...
+            # Otherwise ... close/finish it ...
             # Add the string
             strings.append(string)
 
@@ -138,24 +136,28 @@ def capture_strings(expression : str, place_holder_prefix = '%s', escape_chars =
 
             # Place the start and end in the replace_poses
             replace_poses.append((start_pos, pos))
-            continue # Done
+            continue # Next character please!
 
         # If we are in a string, add the character to the string
         if in_string:
+            # Add the character to the builder
             string += char
 
+    # Are we still trying to extract a string? Even when we've finished?!
     if in_string:
+        # Not having that!
         raise ValueError("Unclosed string")   
     
     # Replace the strings with placeholders
-    offset = 0
+    offset = 0 # Used to express how much the positions will have changed
     for start, end in replace_poses:
-        # Anonymise the string
+        # Anonymise the string (remove the string and replace it with a placeholder)
         expression = expression[:start + offset] + place_holder_prefix + expression[end + offset:]
 
         # Increment the offset
         offset += len(place_holder_prefix) - (end - start)
     
+    # Done, return a tuple of the expression and the strings
     return strings, expression
     
 def tokenise(expression : str, str_holder : str = '%s') -> list:
@@ -223,7 +225,7 @@ def tokenise(expression : str, str_holder : str = '%s') -> list:
             tokens.append(Variable(val))
             continue
         
-        # Unknown
+        # Unknown token
         raise ValueError("Invalid token: " + val)
 
     return tokens
@@ -231,20 +233,25 @@ def tokenise(expression : str, str_holder : str = '%s') -> list:
 def shunt(tokens : list) -> list:
     """Shunt the tokens into reverse polish notation"""
 
-    output = []
-    stack = []
+    output = [] # The output queue
+    stack  = [] # The operator stack
 
+    # Loop through the tokens
     for token in tokens:
         # Handle variables
         if isinstance(token, Variable):
+            # Add the variable to the output queue
             output.append(token)
-            continue
+
+            continue # Next token please!
 
         # Handle brackets
         if isinstance(token, Bracket):
             # Open bracket
             if token.is_left():
+                # Add it to the stack
                 stack.append(token)
+
                 continue
             
             # This should be a right bracket
@@ -252,13 +259,16 @@ def shunt(tokens : list) -> list:
                 while stack and (not isinstance(stack[-1], Bracket) or not stack[-1].is_left()):
                     output.append(stack.pop())
                 
+                # Make sure that we found a left bracket
                 if not stack:
                     raise ValueError("Mismatched brackets")
                 
+                # Remove the left bracket
                 stack.pop()
-                continue
+
+                continue # Next!
             
-            # Unknown bracket
+            # Unknown bracket (Oh no, how did we get here?)
             raise ValueError("Unknown bracket")
         
         # Handle operators (in this case they all have the same precedence)
