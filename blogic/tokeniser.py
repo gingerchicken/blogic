@@ -188,7 +188,15 @@ def tokenise(expression : str, str_holder : str = '%s') -> list:
         elif val == Not.symbol:
             tokens.append(Not())
         elif val == str_holder:
-            tokens.append(Variable(strings.pop()))
+            # Make sure that there is a string to replace it with
+            # We could of course check this before we tokenise but this would require a further pass
+            if len(strings) == 0:
+                raise ValueError("Too many placeholders")
+
+            # Get the string from the list
+            val = strings.pop()
+
+            tokens.append(Variable(val))
         else:
             # TODO maybe put it in a variable class
             raise ValueError("Invalid token: " + val)

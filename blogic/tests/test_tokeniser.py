@@ -103,6 +103,28 @@ class TestTokenise(unittest.TestCase):
 
         self.assertEqual([str(i) for i in tokens], ['(', 'Hello', 'AND', 'World', ')', 'OR', 'World'])
 
+    def test_tokenise_with_string_placeholders(self):
+        """Raises about invalid placeholders"""
+
+        expression = "%s%s('Hello' AND 'World') OR %s"
+        with self.assertRaises(ValueError):
+            tokenise(expression)
+    
+    def test_tokenise_with_strings_with_placeholders(self):
+        """Allows placeholders in strings"""
+
+        expression = "'%s' AND '%s'"
+        tokens = tokenise(expression)
+
+        self.assertEqual([str(i) for i in tokens], ['%s', 'AND', '%s'])
+
+    def test_rejects_invalid_operators(self):
+        """Raises about invalid operators"""
+
+        expression = "'life' is 'funny'"
+        with self.assertRaises(ValueError):
+            tokenise(expression)
+
 class TestShunt(unittest.TestCase):
     def test_shunt(self):
         """Shunts correctly"""
