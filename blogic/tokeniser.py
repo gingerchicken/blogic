@@ -58,13 +58,16 @@ class Xor(Operator):
 class Not(Operator):
     symbol = "-"
 
-    # Please note that this is not a real operator, it just needs
+    # Please note that this is not a typical operator, it just needs
     # to be sorted with higher precedence than the other operators
 
     precedence = 2
 
     def __init__(self):
         super().__init__(self.symbol)
+    
+    def perform(self, a: bool) -> bool:
+        return not a
 
 class Variable(Token):
     @property

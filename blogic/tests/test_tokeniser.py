@@ -1,6 +1,6 @@
 import unittest
 
-from ..tokeniser import capture_strings, tokenise, shunt, And, Or, Xor
+from ..tokeniser import capture_strings, tokenise, shunt, And, Or, Xor, Not
 
 class TestCaptureStrings(unittest.TestCase):
     def test_extracts_strings(self):
@@ -179,7 +179,7 @@ class TestShunt(unittest.TestCase):
 
         self.assertEqual([str(i) for i in output], ['A', 'B', 'C', 'OR', 'AND'])
 
-class Operators(unittest.TestCase):
+class TestOperators(unittest.TestCase):
     def test_and(self):
         """AND works"""
     
@@ -209,3 +209,11 @@ class Operators(unittest.TestCase):
         self.assertTrue(x.perform(True, False))
         self.assertTrue(x.perform(False, True))
         self.assertFalse(x.perform(False, False))
+    
+    def test_not(self):
+        """NOT works"""
+    
+        n = Not()
+
+        self.assertFalse(n.perform(True))
+        self.assertTrue(n.perform(False))

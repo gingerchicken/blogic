@@ -22,7 +22,7 @@ def evaluate_postfix(postfix_tokens : list, variables : dict) -> bool:
             arg = stack.pop()
 
             # Evaluate
-            stack.append(not arg)
+            stack.append(token.perform(arg))
 
             continue
 
