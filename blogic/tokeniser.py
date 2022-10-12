@@ -77,6 +77,7 @@ class Variable(Token):
     def __init__(self, name):
         super().__init__(name)
 
+# Define the operators
 OPERATORS = {
     And.symbol: And,
     Or.symbol: Or,
@@ -107,7 +108,8 @@ def capture_strings(expression : str, place_holder_prefix = '%s', escape_chars =
             string += char
             escape = False
             continue
-        elif char in escape_chars:
+        
+        if char in escape_chars:
             escape = True
             continue
         
@@ -117,24 +119,29 @@ def capture_strings(expression : str, place_holder_prefix = '%s', escape_chars =
         rel_opener = not (in_string and char != open_char) # Is it a relevant opener?
 
         if opener and rel_opener:
-            if in_string:
-                # Add the string
-                strings.append(string)
-
-                # Reset the string
-                string = ""
-                in_string = False
-                open_char = None
-
-                # Place the start and end in the replace_poses
-                replace_poses.append((start_pos, pos))
-            else:
+            # Open the string
+            if not in_string:
                 # Start capturing the string, ignore the first character
                 in_string = True
                 open_char = char
                 start_pos = pos - 1 # -1 to ignore the first character
+                continue # Done
+            
+            # Otherwise close it ...
+            # Add the string
+            strings.append(string)
 
-        elif in_string:
+            # Reset the string
+            string = ""
+            in_string = False
+            open_char = None
+
+            # Place the start and end in the replace_poses
+            replace_poses.append((start_pos, pos))
+            continue # Done
+
+        # If we are in a string, add the character to the string
+        if in_string:
             string += char
 
     if in_string:
@@ -181,16 +188,27 @@ def tokenise(expression : str, str_holder : str = '%s') -> list:
     for match in regex.finditer(anond):
         val = str(match.group())
         
+        # Brackets
         if val in BRACKETS:
             tokens.append(Bracket(val))
-        elif val in OPERATORS:
+            continue
+        
+        # Operators
+        if val in OPERATORS:
             op = OPERATORS[val] # Get the operator's class
             
             # Create an instance of the operator and add it to the tokens
             tokens.append(op())
-        elif val == Not.symbol:
+            continue
+
+        # Not special case
+        if val == Not.symbol:
+            # Create a Not instance and add it to the tokens
             tokens.append(Not())
-        elif val == str_holder:
+            continue
+
+        # Strings/Vars
+        if val == str_holder:
             # Make sure that there is a string to replace it with
             # We could of course check this before we tokenise but this would require a further pass
             if len(strings) == 0:
@@ -199,10 +217,12 @@ def tokenise(expression : str, str_holder : str = '%s') -> list:
             # Get the string from the list
             val = strings.pop()
 
+            # Add it to the tokens
             tokens.append(Variable(val))
-        else:
-            # TODO maybe put it in a variable class
-            raise ValueError("Invalid token: " + val)
+            continue
+        
+        # Unknown
+        raise ValueError("Invalid token: " + val)
 
     return tokens
 
@@ -220,10 +240,13 @@ def shunt(tokens : list) -> list:
 
         # Handle brackets
         if isinstance(token, Bracket):
+            # Open bracket
             if token.is_left():
                 stack.append(token)
-                
-            elif token.is_right():
+                continue
+            
+            # This should be a right bracket
+            if token.is_right():
                 while stack and (not isinstance(stack[-1], Bracket) or not stack[-1].is_left()):
                     output.append(stack.pop())
                 
@@ -231,7 +254,10 @@ def shunt(tokens : list) -> list:
                     raise ValueError("Mismatched brackets")
                 
                 stack.pop()
-            continue
+                continue
+            
+            # Unknown bracket
+            raise ValueError("Unknown bracket")
         
         # Handle operators (in this case they all have the same precedence)
         if isinstance(token, Operator):
