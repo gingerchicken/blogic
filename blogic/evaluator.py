@@ -2,7 +2,7 @@ from .tokeniser import *
 
 def evaluate_postfix(postfix_tokens : list, variables : dict) -> bool:
     """Evaluate the postfix tokens"""
-    
+
     stack = [] # The stack
     
     # Iterate over the tokens
@@ -41,7 +41,8 @@ def evaluate_postfix(postfix_tokens : list, variables : dict) -> bool:
         # Failure
         raise ValueError("Invalid token")
 
-    return stack.pop()
+    # Return the result or None if there is no result
+    return stack.pop() if stack else None
 
 def evaluate(expression : str, variables : dict) -> bool:
     """Evaluate the expression"""

@@ -157,6 +157,40 @@ class TestEvaluate(unittest.TestCase):
             'B': False,
             'C': False
         }), True)
+    
+    def test_no_variables(self):
+        """Works with no variables"""
+        
+        expression = "()"
+
+        # get the result
+        result = evaluate(expression, {})
+        
+        self.assertEqual(result, None)
+    
+    def test_no_variables_excessive_brackets(self):
+        """Doesn't break with excessive brackets"""
+        
+        expression = "(" * 100 + "()" + ")" * 100
+
+        # get the result
+        result = evaluate(expression, {})
+        
+        self.assertEqual(result, None)
+    
+    def test_excessive_brackets(self):
+        """Doesn't break with excessive brackets"""
+        amount = 10 ** 5 # 100,000 brackets (each side)
+        expression = "(" * (amount) + "'A'" + ")" * (amount)
+
+        self.assertTrue(evaluate(expression, {
+            'A': True
+        }))
+
+        self.assertFalse(evaluate(expression, {
+            'A': False
+        }))
+
 
 class TestEvaluateAll(unittest.TestCase):
     def setUp(self) -> None:
