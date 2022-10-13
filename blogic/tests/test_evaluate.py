@@ -191,7 +191,6 @@ class TestEvaluate(unittest.TestCase):
             'A': False
         }))
 
-
 class TestEvaluateAll(unittest.TestCase):
     def setUp(self) -> None:
         self.maxDiff = None
@@ -319,4 +318,30 @@ class TestEvaluateAll(unittest.TestCase):
             [{'A': True,  'B': True,  'C': False, 'D': True},  True],
             [{'A': True,  'B': True,  'C': True,  'D': False}, True],
             [{'A': True,  'B': True,  'C': True,  'D': True},  True]
+        ])
+
+    def test_implication(self):
+        expression = "'A' IMP 'B'"
+
+        # get the result
+        rows = evaluate_all(expression, sort_vars=True)
+
+        self.assertEqual(rows, [
+            [{'A': False, 'B': False}, True],
+            [{'A': False, 'B': True},  True],
+            [{'A': True,  'B': False}, False],
+            [{'A': True,  'B': True},  True]
+        ])
+    
+    def test_equivalence(self):
+        expression = "'A' IFF 'B'"
+
+        # get the result
+        rows = evaluate_all(expression, sort_vars=True)
+
+        self.assertEqual(rows, [
+            [{'A': False, 'B': False}, True],
+            [{'A': False, 'B': True},  False],
+            [{'A': True,  'B': False}, False],
+            [{'A': True,  'B': True},  True]
         ])

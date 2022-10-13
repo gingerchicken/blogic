@@ -69,6 +69,24 @@ class Not(Operator):
     def perform(self, a: bool) -> bool:
         return not a
 
+class IfAndOnlyIf(Operator):
+    symbol = "IFF"
+
+    def __init__(self):
+        super().__init__(self.symbol)
+    
+    def perform(self, a: bool, b: bool) -> bool:
+        return a == b
+
+class Implies(Operator):
+    symbol = "IMP"
+
+    def __init__(self):
+        super().__init__(self.symbol)
+    
+    def perform(self, a: bool, b: bool) -> bool:
+        return not a or b
+
 class Variable(Token):
     @property
     def name(self):
@@ -81,7 +99,9 @@ class Variable(Token):
 OPERATORS = {
     And.symbol: And,
     Or.symbol: Or,
-    Xor.symbol: Xor
+    Xor.symbol: Xor,
+    IfAndOnlyIf.symbol: IfAndOnlyIf,
+    Implies.symbol: Implies
 }
 BRACKETS = ["(", ")"]
 STRING_OPENERS = ['"', "'"]
