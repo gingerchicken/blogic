@@ -1,3 +1,5 @@
+# This file is used to declare what tokens are used in the "language" and how they are handled.
+
 class Token:
     """Base class for all tokens"""
 
@@ -8,6 +10,8 @@ class Token:
         return self.value
 
 class Bracket(Token):
+    """Represents a bracket, either ( or )"""
+
     def __init__(self, value):
         if value not in ("(", ")"):
             raise ValueError("Invalid bracket")
@@ -21,12 +25,16 @@ class Bracket(Token):
         return self.value == ")"
 
 class Operator(Token):
+    """Base class for all operators"""
+
     precedence = 1
 
     def perform(self, a : bool, b : bool) -> bool:
         raise NotImplementedError()
 
 class And(Operator):
+    """Represents the AND operator"""
+
     symbol = "AND"
 
     def __init__(self):
@@ -36,6 +44,8 @@ class And(Operator):
         return a and b
 
 class Or(Operator):
+    """Represents the OR operator"""
+
     symbol = "OR"
 
     def __init__(self):
@@ -45,6 +55,8 @@ class Or(Operator):
         return a or b
 
 class Xor(Operator):
+    """Represents the "exclusive or" operator"""
+
     symbol = "XOR"
 
     def __init__(self):
@@ -54,6 +66,8 @@ class Xor(Operator):
         return a ^ b
 
 class Not(Operator):
+    """Represents a NOT prefix operator"""
+
     symbol = "-"
 
     # Please note that this is not a typical operator, it just needs
@@ -68,6 +82,8 @@ class Not(Operator):
         return not a
 
 class IfAndOnlyIf(Operator):
+    """Represents the "if and only if" operator"""
+
     symbol = "IFF"
 
     def __init__(self):
@@ -77,6 +93,8 @@ class IfAndOnlyIf(Operator):
         return a == b
 
 class Implies(Operator):
+    """Represents an implies/entails operator"""
+
     symbol = "IMP"
 
     def __init__(self):
@@ -86,6 +104,8 @@ class Implies(Operator):
         return not a or b
 
 class Variable(Token):
+    """Represents a variable and stores its value"""
+
     @property
     def name(self):
         return self.value
@@ -101,5 +121,9 @@ OPERATORS = {
     IfAndOnlyIf.symbol: IfAndOnlyIf,
     Implies.symbol: Implies
 }
+
+# Define what brackets we support
 BRACKETS = ["(", ")"]
+
+# Define the quotes we support
 STRING_OPENERS = ['"', "'"]
