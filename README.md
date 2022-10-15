@@ -8,6 +8,8 @@ The following operators are supported:
 | `AND`    | Logical AND |
 | `OR`     | Logical OR  |
 | `XOR`    | Logical XOR |
+| `IFF`    | If and Only if |
+| `IMP`    | Implication  |
 | `-`    | NOTs the next variable |
 | `(`      | Starts a new group |
 | `)`      | Ends a group |
